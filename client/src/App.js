@@ -1,24 +1,45 @@
-import logo from './logo.svg';
-import './App.css';
+import './App.scss';
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { Login } from "./pages/index";
+import ErrorPage from './pages/ErrorPage/ErrorPage';
+import { AuthProvider, useAuth } from './context/AuthContext';
+import Calendar from "./components/Calendar/calendar";
+
+// Componente para rutas protegidas
+const ProtectedRoute = ({ children }) => {
+  const { user } = useAuth();
+  if (!user) {
+    return <Navigate to="/login" />;
+  }
+  return children;
+};
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <AuthProvider>
+      <BrowserRouter>
+        <Routes>
+          {/* Ruta principal - ErrorPage (temporalmente) */}
+          <Route path="/" element={<ErrorPage />} />
+
+          {/* Ruta de login */}
+          <Route path="/login" element={<Login />} />
+
+          {/* Ruta protegida: Calendario */}
+          <Route 
+            path="/calendar" 
+            element={
+              <ProtectedRoute>
+                <Calendar />
+              </ProtectedRoute>
+            } 
+          />
+
+          {/* Ruta de error para rutas no existentes */}
+          <Route path="*" element={<ErrorPage />} />
+        </Routes>
+      </BrowserRouter>
+    </AuthProvider>
   );
 }
 

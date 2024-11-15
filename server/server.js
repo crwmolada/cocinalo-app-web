@@ -1,11 +1,17 @@
 const express = require('express');
+require('dotenv').config();
+const cors = require('cors')
+const db = require('./config/db');
+const routes = require('./routes/indexRoutes'); // Archivo de rutas: user y calendar
+
 const app = express();
-const PORT = process.env.PORT || 3000;
 
-app.get('/', (req, res) => {
-    res.send('¡Hola, mundo!');
-});
+app.use(express.json());
+app.use(cors());
+app.use('/api', routes); 
 
+const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
-    console.log(`Servidor corriendo en http://localhost:${PORT}`);
+    console.log(`El servidor está corriendo en el puerto ${PORT}`);
 });
+

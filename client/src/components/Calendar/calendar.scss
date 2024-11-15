@@ -1,0 +1,468 @@
+// Variables
+:root {
+    --primary-color: #FC7A1E;
+    --secondary-color: #1E3A78;
+    --text-light: #fff;
+    --calendar-light-gray: #f5f5f5;
+  }
+  
+  // Mixins
+  @mixin flex-center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  @mixin flex-between {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  
+  // Estilos del calendario
+  .calendar-page {
+    padding-top: 60px;
+    min-height: 100vh;
+    background-color: #fff;
+    font-family: "Poppins", sans-serif;
+  
+    // Scrollbar personalizado
+    ::-webkit-scrollbar {
+      width: 5px;
+  
+      &-track {
+        background: var(--calendar-light-gray);
+        border-radius: 50px;
+      }
+  
+      &-thumb {
+        background: var(--calendar-primary);
+        border-radius: 50px;
+      }
+    }
+  
+    // Contenedor principal
+    .calendar-container {
+      position: relative;
+      width: 1200px;
+      min-height: 600px;
+      height: auto;
+      margin: 20px auto;
+      padding: 5px;
+      color: var(--text-light);
+      display: flex;
+      border-radius: 10px;
+      background-color: var(--primary-color);
+      z-index: 1;
+      overflow: hidden;
+    }
+  
+    // Sección izquierda
+    .left {
+      width: 60%;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+    }
+  
+    // Calendario
+    .calendar {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      color: var(--secondary-color);
+      border-radius: 5px;
+      background-color: var(--text-light);
+  
+  
+      &::before,
+      &::after {
+        content: "";
+        position: absolute;
+        top: 50%;
+        left: 100%;
+        width: 12px;
+        height: 97%;
+        border-radius: 0 5px 5px 0;
+        background-color: rgba(255, 255, 255, 0.85);
+        transform: translateY(-50%);
+      }
+  
+      &::before {
+        height: 94%;
+        left: calc(100% + 12px);
+        background-color: var(--calendar-primary);
+      }
+  
+      .month {
+        height: 60px;
+        @include flex-between;
+        padding: 0 50px;
+        font-size: 1.2rem;
+        font-weight: 500;
+        text-transform: capitalize;
+  
+        .prev,
+        .next {
+          cursor: pointer;
+  
+          &:hover {
+            color: var(--secondary-color);
+          }
+        }
+      }
+  
+      .weekdays {
+        height: 20px;
+        @include flex-between;
+        padding: 0 20px;
+        font-size: 1rem;
+        font-weight: 500;
+        text-transform: capitalize;
+  
+        div {
+          width: 14.28%;
+          height: 100%;
+          @include flex-center;
+        }
+      }
+  
+      .days {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        padding: 0 20px;
+        font-size: 1rem;
+        font-weight: 500;
+        margin-bottom: 20px;
+  
+        .day {
+          width: 14.28%;
+          height: 90px;
+          @include flex-center;
+          cursor: pointer;
+          color: var(--secondary-color);
+          border: 1px solid var(--calendar-light-gray);
+  
+          &:nth-child(7n + 1) {
+            border-left: 2px solid var(--calendar-light-gray);
+          }
+  
+          &:nth-child(7n) {
+            border-right: 2px solid var(--calendar-light-gray);
+          }
+  
+          &:nth-child(-n + 7) {
+            border-top: 2px solid var(--calendar-light-gray);
+          }
+  
+          &:nth-child(n + 29) {
+            border-bottom: 2px solid var(--calendar-light-gray);
+          }
+  
+          &:not(.prev-date, .next-date):hover {
+            color: var(--text-light);
+            background-color: var(--secondary-color);
+          }
+  
+          &.active {
+            position: relative;
+            font-size: 2rem;
+            color: var(--text-light);
+            background-color: var(--secondary-color);
+  
+            &::before {
+              content: "";
+              position: absolute;
+              top: 0;
+              left: 0;
+              width: 100%;
+              height: 100%;
+              box-shadow: 0 0 10px 2px var(--secondary-color);
+            }
+  
+            &.event::after {
+              background-color: var(--text-light);
+              bottom: 20%;
+            }
+          }
+        }
+      }
+    }
+  
+    // Sección derecha
+    .right {
+      position: relative;
+      width: 40%;
+      min-height: 100%;
+      padding: 20px 0;
+  
+      .today-date {
+        width: 100%;
+        height: 50px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        @include flex-between;
+  
+        margin-top: 50px;
+        margin-bottom: 20px;
+        text-transform: capitalize;
+  
+        .event-day {
+          font-size: 2rem;
+          font-weight: 500;
+        }
+  
+        .event-date {
+          font-size: 1rem;
+          font-weight: 400;
+          color: var(--text-light);
+        }
+      }
+    }
+  
+    // Eventos
+    .events {
+      width: 100%;
+      height: 100%;
+      max-height: 600px;
+      overflow-x: hidden;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      padding-left: 4px;
+  
+      .event {
+        position: relative;
+        width: 95%;
+        min-height: 70px;
+        display: flex;
+        justify-content: center;
+        flex-direction: column;
+        gap: 5px;
+        padding: 0 20px;
+        padding-left: 50px;
+        color: var(--text-light);
+        cursor: pointer;
+        padding-right: 40px;
+  
+        &:hover {
+          background: linear-gradient(90deg, #274d9e, transparent);
+        }
+  
+        &::after {
+          content: "×";
+          position: absolute;
+          top: 50%;
+          right: 15px;
+          font-size: 3.5rem;
+          font-weight: 300;
+          line-height: 0;
+          display: none;
+          align-items: center;
+          justify-content: center;
+          opacity: 0.5;
+          color: #fff;
+          transform: translateY(-50%);
+          transition: opacity 0.3s ease;
+        }
+  
+        &:hover::after {
+          display: flex;
+        }
+  
+        &:hover::after:hover {
+          opacity: 1;
+        }
+      }
+    }
+  
+    .add-event {
+      position: absolute;
+      bottom: 30px;
+      right: 30px;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+      color: #ffffff;
+      border: 2px solid #fcfcfc;
+      opacity: 0.5;
+      border-radius: 50%;
+      background-color: transparent;
+      cursor: pointer;
+      transition: opacity 0.3s ease;
+  
+      &:hover {
+        opacity: 1;
+      }
+    }
+  
+    .add-event-wrapper {
+      position: absolute;
+      bottom: 100px;
+      right: 30px;
+      width: 300px;
+      max-height: 0;
+      overflow: hidden;
+      border-radius: 5px;
+      background-color: #fff;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+      transition: max-height 0.5s ease;
+  
+      &.active {
+        max-height: 300px;
+      }
+  
+      .add-event-header {
+        padding: 15px;
+        color: #000;
+        border-bottom: 1px solid #f5f5f5;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+  
+      .add-event-body {
+        padding: 15px;
+  
+        .add-event-input {
+          margin-bottom: 10px;
+  
+          input {
+            width: 100%;
+            padding: 8px;
+            border: none;
+            border-bottom: 2px solid #ddd;
+            border-radius: 0;
+  
+            &:focus {
+              outline: none;
+              border-color: var(--primary-clr);
+            }
+          }
+        }
+      }
+  
+      .add-event-footer {
+        padding: 15px;
+        text-align: center;
+  
+        button {
+          width: 100%;
+          padding: 10px;
+          border-radius: 4px;
+          background-color: var(--primary-color);
+          color: #fff;
+        }
+      }
+    }
+  
+    .goto-today {
+      height: 50px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 0 20px;
+      margin-bottom: 20px;
+  
+      .goto {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        flex: 1;
+  
+        input {
+          width: 100px;
+          height: 30px;
+          border: 1px solid #ccc;
+          border-radius: 5px;
+          padding: 0 10px;
+          font-size: 14px;
+        }
+  
+        .goto-btn {
+          padding: 5px 10px;
+          border: 1px solid var(--primary-clr);
+          border-radius: 5px;
+          background-color: transparent;
+          cursor: pointer;
+          color: var(--primary-clr);
+  
+          &:hover {
+            background-color: var(--primary-clr);
+            color: #fff;
+          }
+        }
+      }
+  
+      .today-btn {
+        padding: 5px 10px;
+        border: 1px solid var(--primary-clr);
+        border-radius: 5px;
+        background-color: transparent;
+        cursor: pointer;
+        color: var(--primary-clr);
+  
+        &:hover {
+          background-color: var(--primary-clr);
+          color: #fff;
+        }
+      }
+    }
+  
+    .loading-message,
+    .error-message {
+      text-align: center;
+      padding: 2rem;
+      margin-top: 2rem;
+  
+      h2 {
+        color: #333;
+      }
+    }
+  
+    .error-message h2 {
+      color: #ff4444;
+    }
+  
+    .loading-message h2 {
+      color: #2196f3;
+    }
+  }
+  
+  // Media queries
+  @media screen and (max-width: 1200px) {
+    .calendar-page {
+      .calendar-container {
+        width: 95%;
+        margin: 20px auto;
+      }
+    }
+  }
+  
+  @media screen and (max-width: 768px) {
+    .calendar-page {
+      .calendar-container {
+        flex-direction: column;
+      }
+  
+      .left,
+      .right {
+        width: 100%;
+        padding: 10px;
+      }
+  
+      .right {
+        min-height: 400px;
+      }
+    }
+  }
