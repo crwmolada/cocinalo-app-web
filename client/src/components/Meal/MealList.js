@@ -3,7 +3,6 @@ import "./Meal.scss";
 import { Link } from 'react-router-dom';
 
 const MealList = ({ meals }) => {
-  console.log('Meals recibidos en MealList:', meals);
   return (
     <div className='section-wrapper'>
       <div className='container'>

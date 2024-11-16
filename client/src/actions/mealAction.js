@@ -24,31 +24,11 @@ export const fetchCategories = () => async (dispatch) => {
             payload: response.data 
         });
     } catch (error) {
-        console.error('Error al obtener categorías:', error);
         dispatch({ 
             type: FETCH_CATEGORY_ERROR, 
             payload: error.message 
         });
     }
-};
-
-// Mantener la versión antigua para compatibilidad
-export const startFetchSingleMeal = (dispatch, id) => {
-    dispatch({ type: FETCH_SINGLE_MEAL_BEGIN });
-    axios.get(`/recipes/${id}`)
-        .then(response => {
-            dispatch({ 
-                type: FETCH_SINGLE_MEAL_SUCCESS, 
-                payload: response.data 
-            });
-        })
-        .catch(error => {
-            console.error("Error fetching meal:", error);
-            dispatch({ 
-                type: FETCH_SINGLE_MEAL_ERROR, 
-                payload: error.message 
-            });
-        });
 };
 
 // Nueva versión (para usar en el futuro)
@@ -61,7 +41,6 @@ export const fetchSingleMeal = (id) => async (dispatch) => {
             payload: response.data 
         });
     } catch (error) {
-        console.error("Error fetching meal:", error);
         dispatch({ 
             type: FETCH_SINGLE_MEAL_ERROR, 
             payload: error.message 
@@ -83,7 +62,6 @@ export const fetchMealsByCategory = (category) => async (dispatch) => {
             payload: formattedData
         });
     } catch (error) {
-        console.error('Error al obtener recetas por categoría:', error);
         dispatch({
             type: FETCH_CATEGORY_MEALS_ERROR,
             payload: error.message
@@ -103,7 +81,6 @@ export const searchMeals = (searchTerm) => async (dispatch) => {
             payload: response.data 
         });
     } catch (error) {
-        console.error('Error al buscar recetas:', error);
         dispatch({
             type: FETCH_MEALS_ERROR, 
             payload: error.message

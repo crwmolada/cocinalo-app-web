@@ -15,7 +15,7 @@ module.exports = {
         return jwt.sign(
             { userId }, 
             JWT_SECRET, 
-            { expiresIn: '1min' } 
+            { expiresIn: '24h' } 
         );
     }
 };

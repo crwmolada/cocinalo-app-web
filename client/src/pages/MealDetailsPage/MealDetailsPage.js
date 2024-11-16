@@ -15,10 +15,6 @@ const MealDetailsPage = () => {
     startFetchSingleMeal(dispatch, id);
   }, [dispatch, id]);
 
-  useEffect(() => {
-    console.log("Datos de la receta en el contexto:", meal);
-  }, [meal]);
-
   if (mealLoading) {
     return <Loader />;
   }

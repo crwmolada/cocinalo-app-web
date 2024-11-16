@@ -12,10 +12,8 @@ export const AuthProvider = ({ children }) => {
         
         if (token && userData) {
             try {
-                const parsedData = JSON.parse(userData);
-                setUser(parsedData);
+                setUser(JSON.parse(userData));
             } catch (error) {
-                console.error('Error parsing userData:', error);
                 localStorage.removeItem('userData');
                 localStorage.removeItem('token');
             }
@@ -24,25 +22,16 @@ export const AuthProvider = ({ children }) => {
 
     const login = async (correo, password) => {
         try {
-            console.log('Intentando login con:', { correo, password });
-
-            const response = await api.post('/auth/login', {
-                correo,
-                password
-            });
-
-            console.log('Respuesta completa del servidor:', response);
+            const response = await api.post('/auth/login', { correo, password });
 
             if (!response.data.success || !response.data.data) {
-                console.error('Respuesta inválida del servidor:', response.data);
-                throw new Error(response.data.message || 'Respuesta del servidor inválida');
+                throw new Error(response.data.message || 'Error de autenticación');
             }
 
             const { token, user } = response.data.data;
             
-            if (!user || !user.id || !user.correo || !user.nombre || !user.apellido) {
-                console.error('Datos de usuario incompletos:', user);
-                throw new Error('Datos de usuario incompletos');
+            if (!user?.id || !user?.correo || !user?.nombre || !user?.apellido) {
+                throw new Error('Error de autenticación');
             }
 
             const userData = {
@@ -54,17 +43,9 @@ export const AuthProvider = ({ children }) => {
 
             localStorage.setItem('token', token);
             localStorage.setItem('userData', JSON.stringify(userData));
-
             setUser(userData);
             return true;
         } catch (error) {
-            console.error('Error en login:', error);
-            if (error.response) {
-                console.error('Datos del error:', {
-                    status: error.response.status,
-                    data: error.response.data
-                });
-            }
             throw error;
         }
     };

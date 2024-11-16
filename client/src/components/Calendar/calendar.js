@@ -62,7 +62,6 @@ const Calendar = () => {
                     setError(response.data.message || 'No se pudieron cargar los eventos');
                 }
             } catch (error) {
-                console.error('Error completo:', error);
                 let errorMessage = 'Error al cargar eventos';
                 
                 if (error.code === 'ECONNABORTED') {
@@ -99,7 +98,7 @@ const Calendar = () => {
     // Actualiza los eventos del día seleccionado
     const updateEvents = (date) => {
         if (!Array.isArray(eventsArr)) {
-            console.error('eventsArr no es un array:', eventsArr);
+            setError('Error al cargar los eventos');
             return (
                 <div className="no-event">
                     <h3>Ninguna Receta</h3>
@@ -251,8 +250,6 @@ const Calendar = () => {
             }
         } catch (error) {
             setError(error.response?.data?.message || 'Error al eliminar el evento');
-            console.error('Error al eliminar evento:', error);
-            alert('Error al eliminar el evento');
         } finally {
             setIsLoading(false);
         }
@@ -300,7 +297,7 @@ const Calendar = () => {
 
     const hasEvent = (day) => {
         if (!Array.isArray(eventsArr)) {
-            console.error('eventsArr no es un array:', eventsArr);
+            setError('Error al cargar los eventos');
             return false;
         }
         

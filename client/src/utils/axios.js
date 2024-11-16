@@ -15,36 +15,19 @@ api.interceptors.request.use(
         if (token) {
             config.headers.Authorization = `Bearer ${token}`;
         }
-        //logs
-        // console.log('Enviando petición a:', config.url);
-        // console.log('Headers:', config.headers);
         return config;
     },
-    (error) => {
-        console.error('Error en la petición:', error);
-        return Promise.reject(error);
-    }
+    (error) => Promise.reject(error)
 );
 
 // Interceptor para respuestas
 api.interceptors.response.use(
-    (response) => {
-        // console.log('Respuesta recibida de:', response.config.url);
-        return response;
-    },
+    (response) => response,
     (error) => {
-        if (error.code === 'ECONNABORTED') {
-            console.error('La petición excedió el tiempo límite');
-        } else if (error.response) {
-            console.error('Error del servidor:', error.response.data);
-            
-            if (error.response.status === 401) {
-                localStorage.removeItem('token');
-                localStorage.removeItem('userData');
-                window.location.href = '/login';
-            }
-        } else if (error.request) {
-            console.error('No se recibió respuesta del servidor');
+        if (error.response?.status === 401) {
+            localStorage.removeItem('token');
+            localStorage.removeItem('userData');
+            window.location.href = '/login';
         }
         return Promise.reject(error);
     }
