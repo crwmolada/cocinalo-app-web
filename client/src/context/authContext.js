@@ -20,18 +20,67 @@ export const AuthProvider = ({ children }) => {
         }
     }, []);
 
+    const register = async (userData) => {
+        try {
+            const response = await api.post('/auth/register', userData);
+
+            if (!response.data.success || !response.data.data) {
+                return {
+                    success: false,
+                    message: response.data.message || 'Error en el registro'
+                };
+            }
+
+            const { token, user } = response.data.data;
+
+            if (!user?.id || !user?.correo || !user?.nombre || !user?.apellido) {
+                return {
+                    success: false,
+                    message: 'Error en los datos del usuario'
+                };
+            }
+
+            const newUserData = {
+                id: Number(user.id),
+                nombre: user.nombre,
+                apellido: user.apellido,
+                correo: user.correo
+            };
+
+            localStorage.setItem('token', token);
+            localStorage.setItem('userData', JSON.stringify(newUserData));
+            setUser(newUserData);
+
+            return {
+                success: true,
+                message: 'Registro exitoso'
+            };
+        } catch (error) {
+            return {
+                success: false,
+                message: error.response?.data?.message || 'Error en el registro'
+            };
+        }
+    };
+
     const login = async (correo, password) => {
         try {
             const response = await api.post('/auth/login', { correo, password });
 
             if (!response.data.success || !response.data.data) {
-                throw new Error(response.data.message || 'Error de autenticación');
+                return {
+                    success: false,
+                    message: response.data.message || 'Credenciales inválidas'
+                };
             }
 
             const { token, user } = response.data.data;
             
             if (!user?.id || !user?.correo || !user?.nombre || !user?.apellido) {
-                throw new Error('Error de autenticación');
+                return {
+                    success: false,
+                    message: 'Error en los datos del usuario'
+                };
             }
 
             const userData = {
@@ -44,9 +93,16 @@ export const AuthProvider = ({ children }) => {
             localStorage.setItem('token', token);
             localStorage.setItem('userData', JSON.stringify(userData));
             setUser(userData);
-            return true;
+            
+            return {
+                success: true,
+                message: 'Inicio de sesión exitoso'
+            };
         } catch (error) {
-            throw error;
+            return {
+                success: false,
+                message: error.response?.data?.message || 'Usuario o contraseña incorrectos'
+            };
         }
     };
 
@@ -61,6 +117,7 @@ export const AuthProvider = ({ children }) => {
             user, 
             login, 
             logout,
+            register,
             isAuthenticated: !!user 
         }}>
             {children}

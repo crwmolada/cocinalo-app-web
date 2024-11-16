@@ -4,7 +4,7 @@ import "./MealDetailsPage.scss";
 import CategoryList from '../../components/Category/CategoryList';
 import MealSingle from "../../components/Meal/MealSingle";
 import { useMealContext } from '../../context/mealContext';
-import { startFetchSingleMeal } from '../../actions/mealAction';
+import { fetchSingleMeal } from '../../actions/mealAction';
 import Loader from '../../components/Loader/Loader';
 
 const MealDetailsPage = () => {
@@ -12,7 +12,7 @@ const MealDetailsPage = () => {
   const { categories, dispatch, meal, categoryLoading, mealLoading } = useMealContext();
 
   useEffect(() => {
-    startFetchSingleMeal(dispatch, id);
+    fetchSingleMeal(id)(dispatch);
   }, [dispatch, id]);
 
   if (mealLoading) {

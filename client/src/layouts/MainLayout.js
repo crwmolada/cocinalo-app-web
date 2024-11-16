@@ -1,21 +1,21 @@
 import React from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, Outlet } from 'react-router-dom';
 import Navbar from '../components/Navbar/Navbar';
 import Header from '../components/Header/Header';
 import Sidebar from '../components/Sidebar/Sidebar';
 
-const MainLayout = ({ children }) => {
+const MainLayout = () => {
     const location = useLocation();
-    const isLoginPage = location.pathname === '/login';
-    const isCalendarPage = location.pathname === '/calendar';
+    const noHeaderRoutes = ['/calendar', '/login', '/register'];
+    const hideHeader = noHeaderRoutes.includes(location.pathname);
 
     return (
         <>
             <Navbar />
             <Sidebar />
-            {!isLoginPage && !isCalendarPage && <Header />}
+            {!hideHeader && <Header />}
             <main className="main-content">
-                {children}
+                <Outlet />
             </main>
         </>
     );

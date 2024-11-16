@@ -2,7 +2,7 @@ import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import MainLayout from '../layouts/MainLayout';
 import Home from '../pages/HomePage/HomePage';
-import { Login } from '../pages';
+import { Login, Register } from '../pages';
 import Calendar from '../components/Calendar/calendar';
 import MealDetailsPage from '../pages/MealDetailsPage/MealDetailsPage';
 import CategoryPage from '../pages/CategoryPage/CategoryPage';
@@ -10,7 +10,6 @@ import ErrorPage from '../pages/ErrorPage/ErrorPage';
 import SearchResultsPage from '../pages/SearchResultsPage/SearchResultsPage';
 import { useAuth } from '../context/AuthContext';
 
-// Componente para rutas protegidas
 const ProtectedRoute = ({ children }) => {
     const { user } = useAuth();
     if (!user) {
@@ -22,38 +21,25 @@ const ProtectedRoute = ({ children }) => {
 const AppRoutes = () => {
     return (
         <Routes>
-            <Route path="/" element={
-                <MainLayout>
-                    <Home />
-                </MainLayout>
-            } />
-            <Route path="/search" element={
-                <MainLayout>
-                    <SearchResultsPage />
-                </MainLayout>
-            } />
-            <Route path="/meal/:id" element={
-                <MainLayout>
-                    <MealDetailsPage />
-                </MainLayout>
-            } />
-            <Route path="/meal/category/:name" element={
-                <MainLayout>
-                    <CategoryPage />
-                </MainLayout>
-            } />
-            <Route path="/login" element={
-                <MainLayout>
-                    <Login />
-                </MainLayout>
-            } />
-            <Route path="/calendar" element={
-                <ProtectedRoute>
-                    <MainLayout>
+            {/* Todas las rutas bajo MainLayout */}
+            <Route element={<MainLayout />}>
+                {/* Rutas públicas */}
+                <Route path="/login" element={<Login />} />
+                <Route path="/register" element={<Register />} />
+                <Route path="/" element={<Home />} />
+                <Route path="/search" element={<SearchResultsPage />} />
+                <Route path="/meal/:id" element={<MealDetailsPage />} />
+                <Route path="/meal/category/:name" element={<CategoryPage />} />
+                
+                {/* Rutas protegidas */}
+                <Route path="/calendar" element={
+                    <ProtectedRoute>
                         <Calendar />
-                    </MainLayout>
-                </ProtectedRoute>
-            } />
+                    </ProtectedRoute>
+                } />
+            </Route>
+
+            {/* Ruta de error */}
             <Route path="*" element={<ErrorPage />} />
         </Routes>
     );

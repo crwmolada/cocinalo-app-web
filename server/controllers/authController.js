@@ -57,32 +57,38 @@ const registerUser = async (req, res) => {
 const loginUser = async (req, res) => {
     try {
         const { correo, password } = req.body;
+        console.log('Intentando login con correo:', correo);
 
-        // Buscar usuario por correo
+        // Usar findByEmail en lugar de findOne
         const users = await User.findByEmail(correo);
-        if (users.length === 0) {
-            return res.status(400).json({ 
+        
+        if (!users || users.length === 0) {
+            console.log('Usuario no encontrado');
+            return res.json({
                 success: false,
-                message: 'Credenciales inválidas' 
+                message: 'El usuario no existe'
             });
         }
 
-        const user = users[0];
+        const user = users[0]; // Tomar el primer usuario encontrado
 
-        // Verificar contraseña
-        const isMatch = await bcrypt.compare(password, user.password);
-        if (!isMatch) {
-            return res.status(400).json({ 
+        // Verificar la contraseña
+        const validPassword = await bcrypt.compare(password, user.password);
+        
+        if (!validPassword) {
+            console.log('Contraseña incorrecta para usuario:', user.correo);
+            return res.json({
                 success: false,
-                message: 'Credenciales inválidas' 
+                message: 'Contraseña incorrecta'
             });
         }
 
-        // Generar token y enviar respuesta
-        const token = generateToken(user.id);
-        res.status(200).json({
+        // Si todo es correcto, generar token y enviar respuesta
+        const token = generateToken(user);
+        console.log('Login exitoso para usuario:', user.correo);
+        
+        res.json({
             success: true,
-            message: 'Inicio de sesión exitoso',
             data: {
                 token,
                 user: {
@@ -95,9 +101,10 @@ const loginUser = async (req, res) => {
         });
 
     } catch (error) {
-        res.status(500).json({ 
+        console.error('Error en login:', error);
+        res.json({
             success: false,
-            message: 'Error al iniciar sesión'
+            message: 'Error al procesar la solicitud'
         });
     }
 };
