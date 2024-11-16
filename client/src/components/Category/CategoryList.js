@@ -3,10 +3,9 @@ import { Link } from 'react-router-dom';
 import "./Category.scss";
 
 const CategoryList = ({ categories }) => {
-  console.log('Categories:', categories); // Verificar los datos
 
   if (!categories || categories.length === 0) {
-    return <div>No categories available</div>; // Mensaje si no hay categorías
+    return <div>No categories available</div>; 
   }
 
   return (

@@ -11,7 +11,6 @@ const getCategories = async (req, res) => {
         const [rows] = await connection.query(
             'SELECT id_categoria, nombre_categoria, imagen_url, descripcion FROM categorias'
         );
-        console.log('Categorías encontradas:', rows);
 
         res.json(rows);
     } catch (error) {

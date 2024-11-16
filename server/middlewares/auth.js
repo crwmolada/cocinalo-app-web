@@ -2,8 +2,9 @@ const jwt = require('jsonwebtoken');
 const { JWT_SECRET } = require('../config/jwt');
 
 const authMiddleware = (req, res, next) => {
-    console.log('Verificando autenticación...');
-    console.log('Headers recibidos:', req.headers);
+    //logs
+   // console.log('Verificando autenticación...');
+    // console.log('Headers recibidos:', req.headers);
 
     try {
         const authHeader = req.headers.authorization;

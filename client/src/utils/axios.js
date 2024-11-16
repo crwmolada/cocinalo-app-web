@@ -15,8 +15,9 @@ api.interceptors.request.use(
         if (token) {
             config.headers.Authorization = `Bearer ${token}`;
         }
-        console.log('Enviando petición a:', config.url);
-        console.log('Headers:', config.headers);
+        //logs
+        // console.log('Enviando petición a:', config.url);
+        // console.log('Headers:', config.headers);
         return config;
     },
     (error) => {
@@ -28,7 +29,7 @@ api.interceptors.request.use(
 // Interceptor para respuestas
 api.interceptors.response.use(
     (response) => {
-        console.log('Respuesta recibida de:', response.config.url);
+        // console.log('Respuesta recibida de:', response.config.url);
         return response;
     },
     (error) => {

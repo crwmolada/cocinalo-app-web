@@ -54,11 +54,7 @@ const AppRoutes = () => {
                     </MainLayout>
                 </ProtectedRoute>
             } />
-            <Route path="*" element={
-                <MainLayout>
-                    <ErrorPage />
-                </MainLayout>
-            } />
+            <Route path="*" element={<ErrorPage />} />
         </Routes>
     );
 };

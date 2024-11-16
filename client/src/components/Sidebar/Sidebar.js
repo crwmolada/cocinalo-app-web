@@ -9,8 +9,6 @@ const Sidebar = () => {
     const { isSidebarOpen, closeSidebar} = useSidebarContext();
     const { categories } = useMealContext();
 
-    console.log('Categories en Sidebar:', categories);
-
     return (
         <nav className={`sidebar ${isSidebarOpen ? 'sidebar-visible' : ""}`}>
             <button type="button" className='navbar-hide-btn' onClick={closeSidebar}>
