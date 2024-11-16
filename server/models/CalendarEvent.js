@@ -1,14 +1,14 @@
 const db = require('../config/db');
 
 const CalendarEvent = {
-    create(userId, eventData) {
-        const { title, day, month, year, timeFrom, timeTo } = eventData;
-        
-        return new Promise((resolve, reject) => {
+    async create(userId, eventData) {
+        try {
             if (!userId) {
-                return reject(new Error('userId es requerido'));
+                throw new Error('userId es requerido');
             }
 
+            const { title, day, month, year, timeFrom, timeTo } = eventData;
+            
             const query = `
                 INSERT INTO calendar_events 
                 (user_id, title, day, month, year, time_from, time_to) 
@@ -16,32 +16,31 @@ const CalendarEvent = {
             `;
             const values = [userId, title, day, month, year, timeFrom, timeTo];
             
-            // console.log('Ejecutando query:', query);
-            // console.log('Con valores:', values);
-
-            db.query(query, values, (err, result) => {
-                if (err) {
-                    console.error('Error en create:', err);
-                    return reject(err);
-                }
-                resolve({
-                    id: result.insertId,
-                    userId,
-                    title,
-                    day,
-                    month,
-                    year,
-                    timeFrom,
-                    timeTo
-                });
-            });
-        });
+            console.log('Creando evento para usuario:', userId);
+            const [result] = await db.query(query, values);
+            
+            console.log('Evento creado con ID:', result.insertId);
+            
+            return {
+                id: result.insertId,
+                userId,
+                title,
+                day,
+                month,
+                year,
+                timeFrom,
+                timeTo
+            };
+        } catch (error) {
+            console.error('Error al crear evento:', error);
+            throw new Error('Error al crear el evento en el calendario');
+        }
     },
 
-    getByUserId(userId) {
-        return new Promise((resolve, reject) => {
+    async getByUserId(userId) {
+        try {
             if (!userId) {
-                return reject(new Error('userId es requerido'));
+                throw new Error('userId es requerido');
             }
 
             const query = `
@@ -59,22 +58,21 @@ const CalendarEvent = {
                 ORDER BY year, month, day
             `;
 
-            //console.log('Obteniendo eventos para usuario:', userId);
-
-            db.query(query, [userId], (err, results) => {
-                if (err) {
-                    console.error('Error en getByUserId:', err);
-                    return reject(err);
-                }
-                resolve(results);
-            });
-        });
+            console.log('Buscando eventos para usuario:', userId);
+            const [events] = await db.query(query, [userId]);
+            console.log(`Se encontraron ${events.length} eventos`);
+            
+            return events;
+        } catch (error) {
+            console.error('Error al obtener eventos:', error);
+            throw new Error('Error al obtener los eventos del calendario');
+        }
     },
 
-    delete(eventId, userId) {
-        return new Promise((resolve, reject) => {
+    async delete(eventId, userId) {
+        try {
             if (!eventId || !userId) {
-                return reject(new Error('eventId y userId son requeridos'));
+                throw new Error('eventId y userId son requeridos');
             }
 
             const query = `
@@ -82,21 +80,19 @@ const CalendarEvent = {
                 WHERE id = ? AND user_id = ?
             `;
 
-            // console.log('Eliminando evento:', { eventId, userId });
-
-            db.query(query, [eventId, userId], (err, result) => {
-                if (err) {
-                    console.error('Error en delete:', err);
-                    return reject(err);
-                }
-                
-                if (result.affectedRows === 0) {
-                    return reject(new Error('Evento no encontrado o no pertenece al usuario'));
-                }
-                
-                resolve({ message: 'Evento eliminado con éxito' });
-            });
-        });
+            console.log('Intentando eliminar evento:', { eventId, userId });
+            const [result] = await db.query(query, [eventId, userId]);
+            
+            if (result.affectedRows === 0) {
+                throw new Error('Evento no encontrado o no pertenece al usuario');
+            }
+            
+            console.log('Evento eliminado exitosamente');
+            return { message: 'Evento eliminado con éxito' };
+        } catch (error) {
+            console.error('Error al eliminar evento:', error);
+            throw error;
+        }
     }
 };
 

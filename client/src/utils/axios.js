@@ -1,33 +1,49 @@
 import axios from 'axios';
 
-// Instancia de Axios con URL base de API
 const api = axios.create({
-    baseURL: 'http://localhost:5000/api'
+    baseURL: 'http://localhost:5000/api',
+    timeout: 30000,
+    headers: {
+        'Content-Type': 'application/json',
+    }
 });
 
-// Interceptor para agregar el token en las peticiones
+// Interceptor para peticiones
 api.interceptors.request.use(
     (config) => {
         const token = localStorage.getItem('token');
         if (token) {
             config.headers.Authorization = `Bearer ${token}`;
         }
+        console.log('Enviando petición a:', config.url);
+        console.log('Headers:', config.headers);
         return config;
     },
     (error) => {
+        console.error('Error en la petición:', error);
         return Promise.reject(error);
     }
 );
 
-// Interceptor para manejar errores de autenticación
+// Interceptor para respuestas
 api.interceptors.response.use(
-    (response) => response,
+    (response) => {
+        console.log('Respuesta recibida de:', response.config.url);
+        return response;
+    },
     (error) => {
-        if (error.response?.status === 401) {
-            // Token expirado o inválido
-            localStorage.removeItem('token');
-            localStorage.removeItem('userData');
-            window.location.href = '/login';
+        if (error.code === 'ECONNABORTED') {
+            console.error('La petición excedió el tiempo límite');
+        } else if (error.response) {
+            console.error('Error del servidor:', error.response.data);
+            
+            if (error.response.status === 401) {
+                localStorage.removeItem('token');
+                localStorage.removeItem('userData');
+                window.location.href = '/login';
+            }
+        } else if (error.request) {
+            console.error('No se recibió respuesta del servidor');
         }
         return Promise.reject(error);
     }

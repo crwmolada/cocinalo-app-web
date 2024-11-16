@@ -67,7 +67,7 @@ const Form = () => {
 
         try {
             if (isSignUp) {
-                const response = await api.post('/users/register', formData);
+                const response = await api.post('/auth/register', formData);
                 
                 if (response.data.success) {
                     setMessages(prev => ({

@@ -1,0 +1,63 @@
+@import "../../App.scss";
+
+.sidebar{
+    position: fixed;
+    top: 0;
+    right: -100%;
+    width: 300px;
+    height: 100vh;
+    background-color: #fff;
+    box-shadow: -2px 0 4px rgba(0, 0, 0, 0.1);
+    transition: right 0.3s ease-in-out;
+    z-index: 2001;
+    padding-top: 20px;
+
+    &-visible{
+        right: 0;
+    }
+
+    .navbar-hide-btn{
+        position: absolute;
+        right: 20px;
+        top: 20px;
+        background: none;
+        border: none;
+        color: var(--clr-black);
+        cursor: pointer;
+        transition: all 0.3s ease;
+
+        &:hover{
+            color: var(--clr-orange);
+            transform: scale(1.1);
+        }
+    }
+
+    .side-content{
+        margin-top: 60px;
+        padding: 20px;
+    }
+
+    .side-nav{
+        list-style-type: none;
+        padding: 0;
+
+        .side-item{
+            margin: 8px 0;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+
+            .side-link{
+                color: var(--clr-black);
+                text-decoration: none;
+                font-size: 1.1rem;
+                transition: color 0.3s ease;
+                display: block;
+                padding: 4px 0;
+
+                &:hover{
+                    color: var(--clr-orange);
+                }
+            }
+        }
+    }
+}

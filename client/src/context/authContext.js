@@ -26,7 +26,7 @@ export const AuthProvider = ({ children }) => {
         try {
             console.log('Intentando login con:', { correo, password });
 
-            const response = await api.post('/users/login', {
+            const response = await api.post('/auth/login', {
                 correo,
                 password
             });
@@ -55,7 +55,6 @@ export const AuthProvider = ({ children }) => {
             localStorage.setItem('token', token);
             localStorage.setItem('userData', JSON.stringify(userData));
 
-            // console.log('UserData guardado:', userData);
             setUser(userData);
             return true;
         } catch (error) {

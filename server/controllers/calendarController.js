@@ -4,9 +4,6 @@ const calendarController = {
     getEvents: async (req, res) => {
         try {
             const userId = req.userId;
-            // console.log('Obteniendo eventos para usuario:', userId);
-        
-
             const events = await CalendarEvent.getByUserId(userId);
             
             res.json({
@@ -43,10 +40,6 @@ const calendarController = {
                 });
             }
 
-           /*  console.log('Creando evento para usuario:', userId, {
-                title, day, month, year, timeFrom, timeTo
-            }); */
-
             const newEvent = await CalendarEvent.create(userId, {
                 title, day, month, year, timeFrom, timeTo
             });
@@ -77,8 +70,6 @@ const calendarController = {
                     message: 'ID del evento es requerido' 
                 });
             }
-
-            // console.log('Eliminando evento:', { userId, eventId });
 
             await CalendarEvent.delete(eventId, userId);
             

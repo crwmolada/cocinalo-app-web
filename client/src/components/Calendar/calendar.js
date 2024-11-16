@@ -51,19 +51,28 @@ const Calendar = () => {
             setIsLoading(true);
             setError(null);
             try {
-                const response = await api.get('/calendar/events');
-                // console.log('Eventos recibidos:', response.data);
+                const response = await api.get('/calendar/events', {
+                    timeout: 30000
+                });
                 
                 if (response.data.success) {
                     setEventsArr(response.data.data || []);
                 } else {
                     setEventsArr([]);
-                    setError(response.data.message);
+                    setError(response.data.message || 'No se pudieron cargar los eventos');
                 }
             } catch (error) {
-                setError(error.response?.data?.message || 'Error al cargar eventos');
+                console.error('Error completo:', error);
+                let errorMessage = 'Error al cargar eventos';
+                
+                if (error.code === 'ECONNABORTED') {
+                    errorMessage = 'La conexión tardó demasiado. Por favor, recarga la página.';
+                } else if (error.response?.data?.message) {
+                    errorMessage = error.response.data.message;
+                }
+                
+                setError(errorMessage);
                 setEventsArr([]);
-                console.error('Error:', error);
             } finally {
                 setIsLoading(false);
             }
@@ -71,6 +80,9 @@ const Calendar = () => {
 
         if (user) {
             fetchEvents();
+        } else {
+            setEventsArr([]);
+            setIsLoading(false);
         }
     }, [user]);
 

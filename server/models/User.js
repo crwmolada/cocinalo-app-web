@@ -1,15 +1,12 @@
 const db = require('../config/db');
 
 const User = {
-    findByEmail: (correo, callback) => {
-        const query = 'SELECT id, nombre, apellido, correo, password FROM users WHERE correo = ?';
-        // console.log('Ejecutando query:', query, 'con correo:', correo);
-        
-        db.query(query, [correo], (err, results) => {
-            if (err) {
-                console.error('Error en la consulta:', err);
-                return callback(err, null);
-            }
+    findByEmail: async (correo) => {
+        try {
+            const query = 'SELECT id, nombre, apellido, correo, password FROM users WHERE correo = ?';
+            console.log('Buscando usuario con correo:', correo);
+            
+            const [results] = await db.query(query, [correo]);
             
             console.log('Resultados de la DB:', JSON.stringify(results, null, 2));
             
@@ -21,26 +18,38 @@ const User = {
                 });
             }
             
-            callback(null, results);
-        });
+            return results;
+        } catch (error) {
+            console.error('Error en findByEmail:', error);
+            throw error;
+        }
     },
 
-    create: (userData, callback) => {
-        const query = 'INSERT INTO users (nombre, apellido, correo, password) VALUES (?, ?, ?, ?)';
-        // console.log('Ejecutando query de creación:', query);
-        
-        db.query(query, 
-            [userData.nombre, userData.apellido, userData.correo, userData.password], 
-            (err, result) => {
-                if (err) {
-                    console.error('Error en la creación:', err);
-                    return callback(err, null);
-                }
-                
-                // console.log('Resultado de la creación:', result);
-                callback(null, result);
-            }
-        );
+    create: async (userData) => {
+        try {
+            const query = 'INSERT INTO users (nombre, apellido, correo, password) VALUES (?, ?, ?, ?)';
+            console.log('Creando nuevo usuario:', {
+                nombre: userData.nombre,
+                apellido: userData.apellido,
+                correo: userData.correo
+            });
+            
+            const [result] = await db.query(
+                query, 
+                [userData.nombre, userData.apellido, userData.correo, userData.password]
+            );
+            
+            console.log('Usuario creado con ID:', result.insertId);
+            
+            return {
+                id: result.insertId,
+                ...userData,
+                password: undefined 
+            };
+        } catch (error) {
+            console.error('Error en create:', error);
+            throw error;
+        }
     }
 };
 
