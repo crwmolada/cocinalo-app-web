@@ -5,7 +5,7 @@ import "./Category.scss";
 const CategoryList = ({ categories }) => {
 
   if (!categories || categories.length === 0) {
-    return <div>No categories available</div>; 
+    return <div>No hay categorías disponibles</div>; 
   }
 
   return (

@@ -4,10 +4,12 @@ import "./Header.scss";
 import { BsSearch } from "react-icons/bs";
 import { useNavigate } from 'react-router-dom';
 import Alert from '../Alert/Alert';
+import { CSSTransition } from 'react-transition-group';
 
 const SearchForm = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [showAlert, setShowAlert] = useState(false);
+  const [alertMessage, setAlertMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
@@ -21,12 +23,18 @@ const SearchForm = () => {
     try {
       const data = await recipesApi.searchRecipes(searchTerm);
       
-      // Se navega a la página de resultados incluso si no hay resultados :v
+      if (!data || data.length === 0) {
+        setAlertMessage("No se encontraron recetas para tu búsqueda");
+        setShowAlert(true);
+        return;
+      }
+
       navigate(`/search?query=${encodeURIComponent(searchTerm)}`, { 
-        state: { searchResults: data || [] }
+        state: { searchResults: data }
       });
     } catch (error) {
       console.error('Error al buscar recetas:', error);
+      setAlertMessage("Error al buscar recetas");
       setShowAlert(true);
     } finally {
       setIsLoading(false);
@@ -53,12 +61,18 @@ const SearchForm = () => {
         </button>
       </form>
 
-      {showAlert && (
+      <CSSTransition
+        in={showAlert}
+        timeout={300}
+        classNames="fade"
+        unmountOnExit
+      >
         <Alert
-          message="Error al buscar recetas. Por favor, intenta de nuevo."
+          message={alertMessage}
+          type="error"
           onClose={() => setShowAlert(false)}
         />
-      )}
+      </CSSTransition>
     </>
   );
 };
