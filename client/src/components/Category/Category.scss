@@ -24,11 +24,11 @@
         margin: 12px auto;
         border-radius: 8px;
         overflow: hidden;
-        box-shadow: rgba(99, 99, 99, 0.09) 0px 2px 8px 0px;
+        box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 12px;
         transition: $transition;
 
         &:hover {
-            box-shadow: rgba(99, 99, 99, 0.2) 0px 4px 12px 0px;
+            box-shadow: rgba(0, 0, 0, 0.2) 0px 8px 24px;
             
             .category-itm-img {
                 img {
@@ -38,7 +38,7 @@
         }
 
         &-img{
-            height: 180px;
+            height: 200px;
             position: relative;
             overflow: hidden;
 
@@ -57,7 +57,7 @@
             left: 0;
             right: 0;
             padding: 12px;
-            background: linear-gradient(to top, rgba($clr-orange, 0.9), rgba($clr-orange, 0.7));
+            background-color: $clr-orange;
             transition: $transition;
 
             h3 {
@@ -67,6 +67,7 @@
                 letter-spacing: 1px;
                 text-transform: uppercase;
                 color: $clr-white;
+                margin: 0;
             }
         }
 
@@ -74,7 +75,7 @@
             transform: translateY(-5px);
             
             .category-itm-title{
-                background: linear-gradient(to top, rgba($clr-orange, 1), rgba($clr-orange, 0.8));
+                background-color: darken($clr-orange, 5%);
             }
         }
     }
