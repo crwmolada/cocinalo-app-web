@@ -23,17 +23,10 @@ const Calendar = () => {
         const fetchRecipes = async () => {
             try {
                 const response = await axios.get('/calendar/events');
-                console.log('Respuesta del servidor:', response.data);
-                if (response?.data?.data) {
-                    setRecipes(response.data.data);
-                }
+                setRecipes(response?.data?.data || []);
             } catch (error) {
-                console.error('Error completo:', error);
-                setAlert({
-                    show: true,
-                    message: 'Error al cargar las recetas',
-                    type: 'error'
-                });
+                console.log('No hay eventos guardados aún');
+                setRecipes([]);
             }
         };
 
@@ -42,35 +35,39 @@ const Calendar = () => {
 
     const handleRecipeAdd = async (recipeData) => {
         try {
-            console.log('Enviando datos:', recipeData);
-            const response = await axios.post('/calendar/events', recipeData);
-            console.log('Respuesta:', response.data);
+            const formattedData = {
+                title: recipeData.title,
+                day: parseInt(recipeData.day, 10),
+                month: parseInt(recipeData.month, 10),
+                year: parseInt(recipeData.year, 10),
+                timeFrom: recipeData.timeFrom,
+                timeTo: recipeData.timeTo
+            };
+
+            console.log('Cliente - Datos a enviar:', formattedData);
+            const response = await axios.post('/calendar/events', formattedData);
             
             if (response.data && response.data.data) {
-                const newRecipe = {
-                    id: response.data.data.id,
-                    title: recipeData.title,
-                    day: parseInt(recipeData.day),
-                    month: parseInt(recipeData.month),
-                    year: parseInt(recipeData.year),
-                    timeFrom: recipeData.timeFrom,
-                    timeTo: recipeData.timeTo
-                };
-
+                const newRecipe = response.data.data;
                 setRecipes(prevRecipes => [...prevRecipes, newRecipe]);
                 setShowRecipeForm(false);
                 
                 setAlert({
                     show: true,
-                    message: `¡Receta "${recipeData.title}" agregada exitosamente!`,
+                    message: `¡Receta "${formattedData.title}" agregada exitosamente!`,
                     type: 'success'
                 });
             }
         } catch (error) {
-            console.error('Error completo:', error.response || error);
+            console.error('Error detallado del cliente:', {
+                response: error.response?.data,
+                status: error.response?.status,
+                headers: error.response?.headers,
+                error: error
+            });
             setAlert({
                 show: true,
-                message: 'No se pudo guardar la receta. Por favor, intenta nuevamente.',
+                message: error.response?.data?.message || 'No se pudo guardar la receta. Por favor, intenta nuevamente.',
                 type: 'error'
             });
         }

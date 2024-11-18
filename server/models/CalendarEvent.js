@@ -3,36 +3,69 @@ const db = require('../config/db');
 const CalendarEvent = {
     async create(userId, eventData) {
         try {
-            if (!userId) {
-                throw new Error('userId es requerido');
+            console.log('1. Model - Datos recibidos:', {
+                userId,
+                eventData,
+                userIdType: typeof userId
+            });
+
+            const numericUserId = parseInt(userId, 10);
+            
+            if (!numericUserId || isNaN(numericUserId)) {
+                console.error('2. Model - userId inválido:', userId);
+                throw new Error('userId inválido');
             }
 
             const { title, day, month, year, timeFrom, timeTo } = eventData;
             
-            const query = `
-                INSERT INTO calendar_events 
-                (user_id, title, day, month, year, time_from, time_to) 
-                VALUES (?, ?, ?, ?, ?, ?, ?)
-            `;
-            const values = [userId, title, day, month, year, timeFrom, timeTo];
+            const values = [
+                numericUserId,
+                title.trim(),
+                parseInt(day, 10),
+                parseInt(month, 10),
+                parseInt(year, 10),
+                String(timeFrom),
+                String(timeTo)
+            ];
+
+            console.log('3. Model - Valores preparados:', values);
+
+            const query = 'INSERT INTO calendar_events (user_id, title, day, month, year, time_from, time_to) VALUES (?, ?, ?, ?, ?, ?, ?)';
             
-            console.log('Creando evento para usuario:', userId);
+            console.log('4. Model - Query a ejecutar:', {
+                query,
+                values
+            });
+
             const [result] = await db.query(query, values);
             
-            console.log('Evento creado con ID:', result.insertId);
-            
-            return {
+            console.log('5. Model - Resultado de la inserción:', result);
+
+            if (!result.insertId) {
+                throw new Error('No se pudo crear el evento');
+            }
+
+            const createdEvent = {
                 id: result.insertId,
-                userId,
-                title,
-                day,
-                month,
-                year,
-                timeFrom,
-                timeTo
+                userId: numericUserId,
+                title: title.trim(),
+                day: parseInt(day, 10),
+                month: parseInt(month, 10),
+                year: parseInt(year, 10),
+                timeFrom: String(timeFrom),
+                timeTo: String(timeTo)
             };
+
+            console.log('6. Model - Evento creado:', createdEvent);
+            return createdEvent;
+
         } catch (error) {
-            console.error('Error al crear evento:', error);
+            console.error('7. Model - Error detallado:', {
+                error,
+                message: error.message,
+                sql: error.sql,
+                sqlMessage: error.sqlMessage
+            });
             throw new Error('Error al crear el evento en el calendario');
         }
     },
@@ -54,12 +87,13 @@ const CalendarEvent = {
                     time_from AS timeFrom,
                     time_to AS timeTo
                 FROM calendar_events 
-                WHERE user_id = ? 
+                WHERE user_id = ?
                 ORDER BY year, month, day
             `;
 
             console.log('Buscando eventos para usuario:', userId);
-            const [events] = await db.query(query, [userId]);
+            const numericUserId = parseInt(userId, 10);
+            const [events] = await db.query(query, [numericUserId]);
             console.log(`Se encontraron ${events.length} eventos`);
             
             return events;

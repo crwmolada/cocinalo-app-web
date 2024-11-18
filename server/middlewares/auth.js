@@ -2,14 +2,9 @@ const jwt = require('jsonwebtoken');
 const { JWT_SECRET } = require('../config/jwt');
 
 const authMiddleware = (req, res, next) => {
-    //logs
-   // console.log('Verificando autenticación...');
-    // console.log('Headers recibidos:', req.headers);
-
     try {
         const authHeader = req.headers.authorization;
         if (!authHeader) {
-            console.log('No se encontró header de autorización');
             return res.status(401).json({ 
                 success: false,
                 message: 'Token no proporcionado' 
@@ -18,7 +13,6 @@ const authMiddleware = (req, res, next) => {
 
         const token = authHeader.split(' ')[1];
         if (!token) {
-            console.log('Token no encontrado en el header');
             return res.status(401).json({ 
                 success: false,
                 message: 'Token no proporcionado' 
@@ -28,9 +22,13 @@ const authMiddleware = (req, res, next) => {
         const decoded = jwt.verify(token, JWT_SECRET);
         console.log('Token decodificado:', decoded);
         
-        req.userId = decoded.userId;
-        console.log('Usuario autenticado:', req.userId);
+        req.userId = parseInt(decoded.userId, 10);
         
+        if (isNaN(req.userId)) {
+            throw new Error('ID de usuario inválido en el token');
+        }
+        
+        console.log('ID de usuario extraído:', req.userId);
         next();
     } catch (error) {
         console.error('Error de autenticación:', error);

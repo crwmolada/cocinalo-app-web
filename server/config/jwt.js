@@ -11,9 +11,9 @@ if (!process.env.JWT_SECRET && process.env.NODE_ENV === 'production') {
 
 module.exports = {
     JWT_SECRET,
-    generateToken: (userId) => {
+    generateToken: (user) => {
         return jwt.sign(
-            { userId }, 
+            { userId: parseInt(user.id, 10) }, 
             JWT_SECRET, 
             { expiresIn: '24h' } 
         );
