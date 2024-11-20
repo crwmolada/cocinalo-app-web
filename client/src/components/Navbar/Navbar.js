@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { useSidebarContext } from '../../context/sidebarContext';
 import { MdFoodBank } from "react-icons/md";
@@ -12,21 +12,13 @@ const Navbar = () => {
     const { openSidebar } = useSidebarContext();
     const navigate = useNavigate();
     const [scrolled, setScrolled] = useState(false);
+    const location = useLocation();
 
     useEffect(() => {
-        console.log('Estado de autenticación:', { user, isAuthenticated });
-    }, [user, isAuthenticated]);
+        const handleScroll = () => {
+            setScrolled(window.scrollY > 60);
+        };
 
-    const handleScroll = () => {
-        const offset = window.scrollY;
-        if(offset > 60){
-            setScrolled(true);
-        } else {
-            setScrolled(false);
-        }
-    }
-
-    useEffect(() => {
         window.addEventListener('scroll', handleScroll);
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
@@ -34,41 +26,36 @@ const Navbar = () => {
     const handleCalendarClick = () => {
         if (!isAuthenticated) {
             navigate('/login', { 
-                state: { 
-                    message: "Inicia sesión para acceder al calendario de comidas" 
-                } 
+                state: { message: "Inicia sesión para acceder al calendario de comidas" } 
             });
         } else {
             navigate('/calendar');
         }
     };
 
-    const handleLogout = () => {
-        logout();
-        navigate('/');
+    const getNavbarClass = () => {
+        const authPages = ['/login', '/register', '/calendar'];
+        const isAuthPage = authPages.includes(location.pathname);
+        return `navbar ${isAuthPage ? 'auth-page' : ''} ${scrolled ? 'scrolled': ""}`;
     };
 
     return (
-        <nav className={`navbar bg-orange flex align-center ${scrolled ? 'scrolled': ""}`}>
-            <div className='container w-100'>
-                <div className='navbar-content text-white'>
-                    <div className='brand-and-toggler flex align-center justify-between'>
-                        {/* Logo y nombre */}
-                        <Link to="/" className='navbar-brand fw-3 fs-22 flex align-center'>
+        <nav className={getNavbarClass()}>
+            <div className='container'>
+                <div className='navbar-content'>
+                    <div className='brand-and-toggler'>
+                        <Link to="/" className='navbar-brand'>
                             <MdFoodBank />
-                            <span className='navbar-brand-text fw-7'>COCINALO.</span>
+                            <span className='navbar-brand-text'>COCINALO.</span>
                         </Link>
 
-                        {/* Botones y mensaje de bienvenida */}
-                        <div className='navbar-btns flex align-center'>
-                            {/* Mensaje si está autenticado */}
+                        <div className='navbar-btns'>
                             {isAuthenticated && user && (
                                 <span className="welcome-message">
                                     Bienvenido(a), {user.nombre} {user.apellido}
                                 </span>
                             )}
                             
-                            {/* Icono calendario */}
                             <button 
                                 onClick={handleCalendarClick} 
                                 className={`navbar-icon ${!isAuthenticated ? 'not-logged' : ''}`}
@@ -78,29 +65,16 @@ const Navbar = () => {
                                 {!isAuthenticated && <span className="login-hint">Inicia sesión para usar</span>}
                             </button>
 
-                            {/* Icono de login/logout */}
-                            {isAuthenticated ? (
-                                <button 
-                                    onClick={handleLogout} 
-                                    className="navbar-icon"
-                                    title="Cerrar sesión"
-                                >
-                                    <FaSignOutAlt />
-                                </button>
-                            ) : (
-                                <button 
-                                    onClick={() => navigate('/login')} 
-                                    className="navbar-icon"
-                                    title="Iniciar sesión"
-                                >
-                                    <FaSignInAlt />
-                                </button>
-                            )}
-
-                            {/* Icono del Sidebar */}
                             <button 
-                                type="button" 
-                                className='navbar-show-btn text-white' 
+                                onClick={isAuthenticated ? logout : () => navigate('/login')} 
+                                className="navbar-icon"
+                                title={isAuthenticated ? "Cerrar sesión" : "Iniciar sesión"}
+                            >
+                                {isAuthenticated ? <FaSignOutAlt /> : <FaSignInAlt />}
+                            </button>
+
+                            <button 
+                                className='navbar-show-btn' 
                                 onClick={openSidebar}
                                 title="Menú"
                             >

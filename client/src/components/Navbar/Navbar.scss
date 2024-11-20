@@ -4,11 +4,16 @@
     left: 0;
     width: 100%;
     height: 60px;
-    background-color: #E16120;
+    background-color: transparent;
     z-index: 2000;
     transition: all 0.3s ease;
 
+    &.auth-page {
+        background-color: #E16120;
+    }
+
     &.scrolled {
+        background-color: #E16120;
         box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
     }
 
@@ -22,29 +27,36 @@
     }
 
     .brand-and-toggler {
-        width: 100%;
         height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
     }
 
     .navbar-brand {
+        height: 100%;
         color: #fff;
         text-decoration: none;
         display: flex;
         align-items: center;
         gap: 0.5rem;
 
+        svg {
+            font-size: 1.8rem;
+        }
+
         &-text {
             font-size: 1.5rem;
             font-weight: 600;
-            margin-left: 5px;
         }
 
         &:hover {
-            color: #1E3A78;
+            color: #784a1e;
         }
     }
 
     .navbar-btns {
+        height: 100%;
         display: flex;
         align-items: center;
 
@@ -62,8 +74,9 @@
             font-size: 1.5rem;
             cursor: pointer;
             padding: 0.5rem;
-            transition: color 0.3s ease;
             margin-left: 1.5rem;
+            display: flex;
+            align-items: center;
             position: relative;
 
             &:hover {
@@ -87,10 +100,10 @@
                     font-size: 0.8rem;
                     white-space: nowrap;
                     z-index: 1000;
-                }
 
-                &:hover .login-hint {
-                    display: block;
+                    &:hover {
+                        display: block;
+                    }
                 }
             }
         }
@@ -102,7 +115,6 @@
             cursor: pointer;
             padding: 0.5rem;
             margin-left: 1.5rem;
-            transition: color 0.3s ease;
 
             &:hover {
                 color: #1E3A78;
@@ -111,28 +123,6 @@
     }
 }
 
-// Utilidades
-.flex {
-    display: flex;
-}
-
-.align-center {
-    align-items: center;
-}
-
-.justify-between {
-    justify-content: space-between;
-}
-
-.w-100 {
-    width: 100%;
-}
-
-.text-white {
-    color: white;
-}
-
-// Media queries
 @media (max-width: 768px) {
     .navbar {
         .container {
@@ -171,48 +161,6 @@
 
         .navbar-show-btn {
             margin-left: 0.8rem;
-        }
-    }
-}
-
-// Estilos para eventos del calendario
-.events {
-    .event {
-        position: relative;
-
-        &:hover {
-            background: linear-gradient(90deg, #274d9e, transparent);
-        }
-
-        .event-delete {
-            position: absolute;
-            top: 0;
-            right: 0;
-            width: 50px;
-            height: 100%;
-            cursor: pointer;
-
-            &::after {
-                content: "×";
-                position: absolute;
-                top: 50%;
-                right: 15px;
-                font-size: 3.5rem;
-                font-weight: 300;
-                line-height: 0;
-                display: none;
-                align-items: center;
-                justify-content: center;
-                opacity: 0.5;
-                color: #fff;
-                transform: translateY(-50%);
-                transition: opacity 0.3s ease;
-            }
-
-            &:hover::after {
-                display: flex;
-                opacity: 1;
-            }
         }
     }
 }
