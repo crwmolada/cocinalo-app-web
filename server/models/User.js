@@ -3,20 +3,11 @@ const db = require('../config/db');
 const User = {
     findByEmail: async (correo) => {
         try {
-            const query = 'SELECT id, nombre, apellido, correo, password FROM users WHERE correo = ?';
+            const query = 'SELECT id, nombre, apellido, correo, password, google_id FROM users WHERE correo = ?';
             console.log('Buscando usuario con correo:', correo);
             
             const [results] = await db.query(query, [correo]);
-            
-            console.log('Resultados de la DB:', JSON.stringify(results, null, 2));
-            
-            if (results && results.length > 0) {
-                console.log('Usuario encontrado:', {
-                    id: results[0].id,
-                    nombre: results[0].nombre,
-                    apellido: results[0].apellido
-                });
-            }
+            console.log('Resultados de la DB:', results);
             
             return results;
         } catch (error) {
@@ -27,24 +18,42 @@ const User = {
 
     create: async (userData) => {
         try {
-            const query = 'INSERT INTO users (nombre, apellido, correo, password) VALUES (?, ?, ?, ?)';
+            // Validar datos requeridos
+            if (!userData.correo) {
+                throw new Error('El correo electrónico es requerido');
+            }
+
+            const query = `
+                INSERT INTO users (nombre, apellido, correo, password, google_id) 
+                VALUES (?, ?, ?, ?, ?)
+            `;
+
             console.log('Creando nuevo usuario:', {
                 nombre: userData.nombre,
                 apellido: userData.apellido,
-                correo: userData.correo
+                correo: userData.correo,
+                googleId: userData.googleId
             });
             
             const [result] = await db.query(
                 query, 
-                [userData.nombre, userData.apellido, userData.correo, userData.password]
+                [
+                    userData.nombre || 'Usuario',
+                    userData.apellido || 'Google',
+                    userData.correo,
+                    userData.password,
+                    userData.googleId || null
+                ]
             );
             
             console.log('Usuario creado con ID:', result.insertId);
             
             return {
                 id: result.insertId,
-                ...userData,
-                password: undefined 
+                nombre: userData.nombre,
+                apellido: userData.apellido,
+                correo: userData.correo,
+                googleId: userData.googleId
             };
         } catch (error) {
             console.error('Error en create:', error);

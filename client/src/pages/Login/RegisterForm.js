@@ -166,14 +166,17 @@ const RegisterForm = () => {
                         Registrarse
                     </button>
 
-                    <div className="auth-links">
-                        <p>
-                            ¿Ya tienes una cuenta?{' '}
-                            <span onClick={() => navigate('/login')} className="link">
-                                Iniciar Sesión
-                            </span>
-                        </p>
+                    <div className="auth-separator">
+                        <span>¿Ya tienes una cuenta?</span>
                     </div>
+
+                    <button 
+                        type="button" 
+                        className="auth-button secondary"
+                        onClick={() => navigate('/login')}
+                    >
+                        Iniciar Sesión
+                    </button>
                 </form>
             </div>
         </div>

@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faGoogle } from '@fortawesome/free-brands-svg-icons';
 import './LoginForm.scss';
 
 const LoginForm = () => {
@@ -10,7 +12,7 @@ const LoginForm = () => {
     });
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
-    const { login } = useAuth();
+    const { login, loginWithGoogle } = useAuth();
     const navigate = useNavigate();
 
     const handleChange = (e) => {
@@ -70,6 +72,26 @@ const LoginForm = () => {
         }
     };
 
+    const handleGoogleLogin = async () => {
+        try {
+            setError('');
+            setSuccess('');
+            
+            const result = await loginWithGoogle();
+
+            if (result.success) {
+                setSuccess('¡Inicio de sesión exitoso! Redirigiendo...');
+                setTimeout(() => {
+                    navigate('/calendar');
+                }, 1500);
+            } else {
+                setError(result.message);
+            }
+        } catch (error) {
+            setError('Error al iniciar sesión con Google');
+        }
+    };
+
     return (
         <div className="auth-container">
             <div className="auth-card">
@@ -104,6 +126,19 @@ const LoginForm = () => {
 
                     <button type="submit" className="auth-button">
                         Iniciar Sesión
+                    </button>
+
+                    <div className="auth-separator">
+                        <span>O</span>
+                    </div>
+
+                    <button 
+                        type="button" 
+                        className="auth-button google"
+                        onClick={handleGoogleLogin}
+                    >
+                        <FontAwesomeIcon icon={faGoogle} className="google-icon" />
+                        Continuar con Google
                     </button>
 
                     <div className="auth-separator">

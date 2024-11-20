@@ -38,7 +38,7 @@ export const useSidebarContext = () => {
     return context;
 };
 
-// Provider component
+// Provider componente
 export const SidebarProvider = ({ children }) => {
     const [state, dispatch] = useReducer(sidebarReducer, initialState);
 

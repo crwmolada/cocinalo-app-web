@@ -1,4 +1,6 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
+import { auth, googleProvider } from '../config/firebase';
+import { signInWithPopup } from 'firebase/auth';
 import api from '../utils/axios';
 
 const AuthContext = createContext(null);
@@ -112,12 +114,81 @@ export const AuthProvider = ({ children }) => {
         setUser(null);
     };
 
+    const loginWithGoogle = async () => {
+        try {
+            const result = await signInWithPopup(auth, googleProvider);
+            
+            if (!result.user.email) {
+                throw new Error('No se pudo obtener el correo electrónico de Google');
+            }
+
+            console.log('Datos de usuario Google:', {
+                email: result.user.email,
+                displayName: result.user.displayName,
+                uid: result.user.uid
+            });
+
+            // aquí se extrae el nombre y apellido del display
+            const fullName = result.user.displayName || '';
+            const [nombre, ...apellidoArray] = fullName.split(' ');
+            const apellido = apellidoArray.join(' ');
+
+            // enviamos datos al servidor
+            const response = await api.post('/auth/google-login', {
+                correo: result.user.email,
+                nombre: nombre || '',
+                apellido: apellido || '',
+                googleId: result.user.uid
+            });
+
+            if (!response.data.success || !response.data.data) {
+                return {
+                    success: false,
+                    message: response.data.message || 'Error en la autenticación con Google'
+                };
+            }
+
+            const { token, user: userData } = response.data.data;
+
+            if (!userData?.id || !userData?.correo || !userData?.nombre || !userData?.apellido) {
+                return {
+                    success: false,
+                    message: 'Error en los datos del usuario'
+                };
+            }
+
+            const newUserData = {
+                id: Number(userData.id),
+                nombre: userData.nombre,
+                apellido: userData.apellido,
+                correo: userData.correo
+            };
+
+            localStorage.setItem('token', token);
+            localStorage.setItem('userData', JSON.stringify(newUserData));
+            setUser(newUserData);
+
+            return {
+                success: true,
+                message: 'Inicio de sesión con Google exitoso'
+            };
+
+        } catch (error) {
+            console.error('Error en login con Google:', error);
+            return {
+                success: false,
+                message: error.response?.data?.message || 'Error al iniciar sesión con Google'
+            };
+        }
+    };
+
     return (
         <AuthContext.Provider value={{ 
             user, 
             login, 
             logout,
             register,
+            loginWithGoogle,
             isAuthenticated: !!user 
         }}>
             {children}

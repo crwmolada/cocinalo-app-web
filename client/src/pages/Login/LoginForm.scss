@@ -39,7 +39,7 @@
 
 .auth-card {
     background-color: $clr-white;
-    padding: 40px;
+    padding: 30px;
     border-radius: 12px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     width: 100%;
@@ -69,23 +69,23 @@
     h2 {
         color: $clr-orange;
         text-align: center;
-        margin-bottom: 30px;
+        margin-bottom: 20px;
         font-size: 24px;
     }
 
     .form-group {
-        margin-bottom: 20px;
+        margin-bottom: 15px;
 
         label {
             display: block;
-            margin-bottom: 8px;
+            margin-bottom: 4px;
             color: $clr-dark;
             font-weight: 500;
         }
 
         input {
             width: 100%;
-            padding: 12px;
+            padding: 10px;
             border: 1px solid rgba($clr-dark, 0.2);
             border-radius: 6px;
             font-size: 16px;
@@ -100,7 +100,7 @@
 
     .auth-button {
         width: 100%;
-        padding: 14px;
+        padding: 12px;
         background-color: $clr-orange;
         color: $clr-white;
         border: none;
@@ -123,14 +123,44 @@
                 background-color: rgba($clr-orange, 0.1);
             }
         }
+
+        &.google {
+            background-color: $clr-white;
+            color: $clr-dark;
+            border: 1px solid rgba($clr-dark, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin: 10px 0;
+            position: relative;
+            transition: all 0.3s ease;
+
+            .google-icon {
+                font-size: 18px;
+                color: #4285f4;
+            }
+
+            &:hover {
+                background-color: rgba($clr-dark, 0.05);
+                border-color: rgba($clr-dark, 0.3);
+                transform: translateY(-1px);
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            }
+
+            &:active {
+                transform: translateY(0);
+                box-shadow: none;
+            }
+        }
     }
 }
 
 .form-row {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 15px;
-    margin-bottom: 20px;
+    gap: 10px;
+    margin-bottom: 15px;
 
     @media (max-width: 480px) {
         grid-template-columns: 1fr;
@@ -179,12 +209,12 @@
 .auth-separator {
     position: relative;
     text-align: center;
-    margin: 20px 0;
+    margin: 15px 0;
     
     span {
         background-color: $clr-white;
-        padding: 0 10px;
-        color: $clr-dark;
+        padding: 0 15px;
+        color: rgba($clr-dark, 0.6);
         font-size: 14px;
         position: relative;
         z-index: 1;
@@ -199,5 +229,16 @@
         height: 1px;
         background-color: rgba($clr-dark, 0.2);
         z-index: 0;
+    }
+}
+
+@keyframes buttonHover {
+    from {
+        transform: translateY(0);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    to {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     }
 } 
