@@ -189,7 +189,7 @@ https://pastebin.com/5gw2DHPX
 
 # Pre visualización
 
-![Captura de pantalla 2024-11-18 153127](https://github.com/user-attachments/assets/2cdf4ab3-3e1a-468a-ae16-068b6d4c6c05)
+![Captura de pantalla 2024-11-20 180907](https://github.com/user-attachments/assets/d6dab7e6-349f-47a0-8642-cc9220638046)
 ![Captura de pantalla 2024-11-18 153151](https://github.com/user-attachments/assets/962737b2-59e3-402c-810d-d2c5825a2932)
 ![Captura de pantalla 2024-11-18 153213](https://github.com/user-attachments/assets/8e794026-0b91-465e-b37b-c595ea632aa5)
 ![Captura de pantalla 2024-11-18 153239](https://github.com/user-attachments/assets/61240d5c-b31b-4fed-832f-ab621284fcaa)
